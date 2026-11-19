@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocham Cię ❤</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #3b1030;
+    --bg-glow: #5e1b45;
+    --rose: #ff8fab;
+    --blush: #ffe3ea;
+    --text: #fff1f4;
+    --muted: #e9b6c6;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem 1.25rem;
+    text-align: center;
+    color: var(--text);
+    font-family: "Nunito", system-ui, sans-serif;
+    background: radial-gradient(ellipse at 50% 30%, var(--bg-glow), var(--bg) 70%);
+    overflow-x: hidden;
+  }
+  h1 {
+    margin: 0;
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-size: clamp(3rem, 14vw, 7rem);
+    line-height: 1.1;
+    color: var(--blush);
+    text-shadow: 0 0 40px rgba(255, 143, 171, .45);
+  }
+  .heart {
+    width: clamp(110px, 30vw, 170px);
+    border: 0;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    animation: beat 1.6s ease-in-out infinite;
+  }
+  .heart svg { width: 100%; display: block; fill: var(--rose); filter: drop-shadow(0 0 22px rgba(255, 143, 171, .6)); }
+  .heart:focus-visible { outline: 3px solid var(--blush); outline-offset: 8px; border-radius: 12px; }
+  .heart:active { transform: scale(.92); }
+  @keyframes beat {
+    0%, 40%, 100% { transform: scale(1); }
+    10% { transform: scale(1.12); }
+    25% { transform: scale(1.04); }
+  }
+  .hint { margin: 0; color: var(--muted); font-size: 1rem; }
+  #reason {
+    min-height: 4.5rem;
+    max-width: 32rem;
+    margin: 0;
+    font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+    line-height: 1.5;
+  }
+  #reason.swap { animation: fade .5s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  #days { margin: 0; color: var(--muted); }
+  .float {
+    position: fixed;
+    bottom: -2rem;
+    pointer-events: none;
+    animation: rise 3.2s ease-out forwards;
+  }
+  @keyframes rise { to { transform: translateY(-110vh) rotate(25deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .heart, #reason.swap { animation: none; }
+    .float { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Kocham Cię</h1>
+
+  <button class="heart" id="heart" aria-label="Kliknij, aby zobaczyć kolejny powód">
+    <svg viewBox="0 0 32 29" aria-hidden="true"><path d="M23.6 0c-2.9 0-5.4 1.5-7.6 4.2C13.800 1.500 11.300 0 8.400 0 3.800 0 0 3.800 0 8.500c0 9.300 14.200 19.300 15.100 19.900.5.3 1.300.3 1.800 0C17.800 27.800 32 17.800 32 8.500 32 3.800 28.200 0 23.600 0z"/></svg>
+  </button>
+
+  <p class="hint" id="hint">Kliknij serce</p>
+  <p id="reason" aria-live="polite"></p>
+  <p id="days"></p>
+
+<script>
+  // ✏️ ZMIEŃ TO NA SWOJE:
+  var START_DATE = "";   // np. "2023-02-14" – pokaże, ile dni jesteście razem. Zostaw puste, aby ukryć.
+  var REASONS = [
+    "Za Twój uśmiech, który rozjaśnia każdy dzień.",
+    "Za to, że potrafisz mnie rozśmieszyć, nawet gdy mam zły dzień.",
+    "Za to, że przy Tobie mogę być sobą.",
+    "Za każdą małą chwilę, która z Tobą staje się wyjątkowa.",
+    "Za to, że jesteś."
+  ];
+
+  var i = -1;
+  var reason = document.getElementById("reason");
+  var hint = document.getElementById("hint");
+
+  function floatHeart() {
+    var h = document.createElement("span");
+    h.className = "float";
+    h.textContent = ["❤", "💗", "💖"][Math.floor(Math.random() * 3)];
+    h.style.left = Math.random() * 95 + "vw";
+    h.style.fontSize = 1 + Math.random() * 1.5 + "rem";
+    document.body.appendChild(h);
+    setTimeout(function () { h.remove(); }, 3300);
+  }
+
+  document.getElementById("heart").addEventListener("click", function () {
+    i = (i + 1) % REASONS.length;
+    reason.textContent = REASONS[i];
+    reason.classList.remove("swap");
+    void reason.offsetWidth;
+    reason.classList.add("swap");
+    hint.textContent = "Kliknij ponownie ❤";
+    for (var n = 0; n < 6; n++) setTimeout(floatHeart, n * 90);
+  });
+
+  if (START_DATE) {
+    var d = Math.floor((Date.now() - new Date(START_DATE).getTime()) / 86400000);
+    if (d >= 0) document.getElementById("days").textContent = "Razem już " + d + " dni 💕";
+  }
+</script>
+</body>
+</html>
